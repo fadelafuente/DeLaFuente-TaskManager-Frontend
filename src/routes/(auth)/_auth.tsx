@@ -1,4 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { Navbar } from '@/components/shared/navbar'
+import { createFileRoute, Outlet } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/(auth)/_auth')({
   component: Index,
@@ -6,8 +7,11 @@ export const Route = createFileRoute('/(auth)/_auth')({
 
 function Index() {
   return (
-    <div className="p-2">
-      <h3>Welcome Home!</h3>
+    <div className='w-full h-screen flex'>
+      <Navbar />
+      <div className='mt-24'>
+        <Outlet />
+      </div>
     </div>
   )
 }
