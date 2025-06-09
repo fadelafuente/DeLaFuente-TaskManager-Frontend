@@ -38,7 +38,7 @@ function RouteComponent() {
     },
   });
 
-  const password = useWatch({ control: form.control, name: "password" });
+  const password = useWatch({ control: form.control, name: 'password' });
 
   function onSubmit(values: authSchemaType) {
     register(values);
@@ -90,7 +90,7 @@ function RouteComponent() {
           </Form>
         </CardContent>
         <CardFooter className='flex gap-1'>
-          <p>Already have an account?</p> <Link to='/login' className='underline text-blue-600'>login</Link>
+          <p>Already have an account?</p> <Link to='/login' className='underline text-blue-600'>Log in</Link>
         </CardFooter>
       </Card>
     </div>
