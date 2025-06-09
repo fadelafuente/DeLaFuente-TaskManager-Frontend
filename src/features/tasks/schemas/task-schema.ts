@@ -8,7 +8,7 @@ const STATUS_VALUES: string[] = [...statusEnumValues];
 export const taskSchema = z.object({
   type: z.enum(TYPE_VALUES as [string, ...string[]]),
   description: z.string().min(1, 'Description is required.'),
-  dueDate: z.date(),
+  dueDate: z.coerce.date(),
   status: z.enum(STATUS_VALUES as [string, ...string[]]),
 })
 
