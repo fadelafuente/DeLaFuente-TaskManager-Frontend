@@ -1,17 +1,23 @@
 import { axiosInstance } from '@/lib/axios-instance'
 import { useQuery } from '@tanstack/react-query'
+import type { PaginationState } from '@tanstack/react-table';
 
-export const useGetTasks = () => {
+interface useGetTasksProps {
+  pagination: PaginationState;
+}
+
+export function useGetTasks({ pagination }: useGetTasksProps) {
   return useQuery({
     queryFn: async () => {
       try {
-        const response = await axiosInstance.get('/tasks');
-        return response;
+        const query: string = `?page=${pagination.pageIndex}&size=${pagination.pageSize}`;
+        const response = await axiosInstance.get(`/tasks${query}`);
+        return response.data;
       } catch(e) {
         console.log(e);
         return [];
       }     
     },
-    queryKey: ['tasks'],
+    queryKey: ['tasks', pagination],
   });
 }

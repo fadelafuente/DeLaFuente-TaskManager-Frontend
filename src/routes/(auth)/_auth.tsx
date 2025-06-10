@@ -9,9 +9,9 @@ function Index() {
   return (
     <div className='w-full h-screen flex'>
       <Navbar />
-      <div className='mt-24'>
+      <div className='mt-24 w-full'>
         <Outlet />
       </div>
     </div>
-  )
+  );
 }

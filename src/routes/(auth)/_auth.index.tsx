@@ -1,9 +1,38 @@
+import { taskColumns } from '@/features/tasks/columns/task-columns';
+import { TaskTable } from '@/features/tasks/components/task-table';
+import { useGetTasks } from '@/features/tasks/hooks/use-get-tasks'
 import { createFileRoute } from '@tanstack/react-router'
+import type { PaginationState } from '@tanstack/react-table';
+import { Loader2 } from 'lucide-react';
+import { useState } from 'react';
 
 export const Route = createFileRoute('/(auth)/_auth/')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  return <div>Hello "/(auth)/_auth/"!</div>
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 20,
+  });
+  const { data: tasks, isLoading } = useGetTasks({ pagination } );
+
+  if(isLoading) {
+    return (
+      <div className='flex h-full w-full items-center justify-center'>
+        <Loader2 className='size-8 animate-spin' />
+      </div>
+    )
+  }
+
+  return (
+    <div className='mx-4 lg:mx-12'>
+      <TaskTable 
+        columns={ taskColumns } 
+        data={ tasks['content'] } 
+        paginationState={ { pagination, setPagination } }
+        pageCount={ tasks?.totalPages }
+      />
+    </div>
+  );
 }

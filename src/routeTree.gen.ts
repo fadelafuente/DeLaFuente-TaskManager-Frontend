@@ -18,6 +18,7 @@ import { Route as authAuthImport } from './routes/(auth)/_auth'
 import { Route as authAuthIndexImport } from './routes/(auth)/_auth.index'
 import { Route as publicPublicRegisterImport } from './routes/(public)/_public.register'
 import { Route as publicPublicLoginImport } from './routes/(public)/_public.login'
+import { Route as authAuthTasksTaskidImport } from './routes/(auth)/_auth.tasks.$taskid'
 
 // Create Virtual Routes
 
@@ -62,6 +63,12 @@ const publicPublicLoginRoute = publicPublicLoginImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => publicPublicRoute,
+} as any)
+
+const authAuthTasksTaskidRoute = authAuthTasksTaskidImport.update({
+  id: '/tasks/$taskid',
+  path: '/tasks/$taskid',
+  getParentRoute: () => authAuthRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -117,6 +124,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authAuthIndexImport
       parentRoute: typeof authAuthImport
     }
+    '/(auth)/_auth/tasks/$taskid': {
+      id: '/(auth)/_auth/tasks/$taskid'
+      path: '/tasks/$taskid'
+      fullPath: '/tasks/$taskid'
+      preLoaderRoute: typeof authAuthTasksTaskidImport
+      parentRoute: typeof authAuthImport
+    }
   }
 }
 
@@ -124,10 +138,12 @@ declare module '@tanstack/react-router' {
 
 interface authAuthRouteChildren {
   authAuthIndexRoute: typeof authAuthIndexRoute
+  authAuthTasksTaskidRoute: typeof authAuthTasksTaskidRoute
 }
 
 const authAuthRouteChildren: authAuthRouteChildren = {
   authAuthIndexRoute: authAuthIndexRoute,
+  authAuthTasksTaskidRoute: authAuthTasksTaskidRoute,
 }
 
 const authAuthRouteWithChildren = authAuthRoute._addFileChildren(
@@ -173,12 +189,14 @@ export interface FileRoutesByFullPath {
   '/': typeof authAuthIndexRoute
   '/login': typeof publicPublicLoginRoute
   '/register': typeof publicPublicRegisterRoute
+  '/tasks/$taskid': typeof authAuthTasksTaskidRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof authAuthIndexRoute
   '/login': typeof publicPublicLoginRoute
   '/register': typeof publicPublicRegisterRoute
+  '/tasks/$taskid': typeof authAuthTasksTaskidRoute
 }
 
 export interface FileRoutesById {
@@ -190,13 +208,14 @@ export interface FileRoutesById {
   '/(public)/_public/login': typeof publicPublicLoginRoute
   '/(public)/_public/register': typeof publicPublicRegisterRoute
   '/(auth)/_auth/': typeof authAuthIndexRoute
+  '/(auth)/_auth/tasks/$taskid': typeof authAuthTasksTaskidRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/register'
+  fullPaths: '/' | '/login' | '/register' | '/tasks/$taskid'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/register'
+  to: '/' | '/login' | '/register' | '/tasks/$taskid'
   id:
     | '__root__'
     | '/(auth)'
@@ -206,6 +225,7 @@ export interface FileRouteTypes {
     | '/(public)/_public/login'
     | '/(public)/_public/register'
     | '/(auth)/_auth/'
+    | '/(auth)/_auth/tasks/$taskid'
   fileRoutesById: FileRoutesById
 }
 
@@ -243,7 +263,8 @@ export const routeTree = rootRoute
       "filePath": "(auth)/_auth.tsx",
       "parent": "/(auth)",
       "children": [
-        "/(auth)/_auth/"
+        "/(auth)/_auth/",
+        "/(auth)/_auth/tasks/$taskid"
       ]
     },
     "/(public)": {
@@ -270,6 +291,10 @@ export const routeTree = rootRoute
     },
     "/(auth)/_auth/": {
       "filePath": "(auth)/_auth.index.tsx",
+      "parent": "/(auth)/_auth"
+    },
+    "/(auth)/_auth/tasks/$taskid": {
+      "filePath": "(auth)/_auth.tasks.$taskid.tsx",
       "parent": "/(auth)/_auth"
     }
   }
