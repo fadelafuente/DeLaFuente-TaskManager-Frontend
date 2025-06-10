@@ -5,6 +5,7 @@ import type { Task } from '../models/task'
 import type { Creator } from '../models/creator';
 import { Button } from '@/components/ui/button';
 import { ArrowUpDown } from 'lucide-react';
+import { formatDate } from '@/lib/utils';
 
 export const taskColumns: ColumnDef<Task>[] = [
   {
@@ -64,15 +65,10 @@ export const taskColumns: ColumnDef<Task>[] = [
       )
     },
     cell: ({ row }) => {
-      const dueDate: Date = new Date(row.getValue('dueDate'));
-      const formattedDate = dueDate.toLocaleDateString(undefined, {
-        year: 'numeric',
-        month: 'short',
-        day: '2-digit'
-      });
+      const dueDate: string = formatDate((new Date(row.getValue('dueDate'))).toLocaleDateString());
 
       return (
-        <div>{ formattedDate }</div>
+        <div>{ dueDate }</div>
       )
     }
   },
