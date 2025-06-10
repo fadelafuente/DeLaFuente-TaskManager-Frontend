@@ -4,17 +4,12 @@ import { AxiosError } from 'axios';
 import { toast } from 'sonner';
 import type { TaskSchemaType } from '../schemas/task-schema';
 
-interface useUpdateTaskProps {
-  id: number;
-  body: TaskSchemaType; 
-}
-
 export const useUpdateTask = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, body }: useUpdateTaskProps) => {
-      const response = await axiosInstance.post(`/tasks/${id}`, body);
+    mutationFn: async (body: TaskSchemaType) => {
+      const response = await axiosInstance.post(`/tasks/${ body.id }`, body);
       return response;
     },
     onSuccess: () => {

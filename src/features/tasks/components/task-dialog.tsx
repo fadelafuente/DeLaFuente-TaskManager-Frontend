@@ -24,8 +24,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useForm } from 'react-hook-form';
 import { taskSchema, type TaskSchemaType } from '../schemas/task-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { UseMutationResult } from '@tanstack/react-query';
-import type { AxiosResponse } from 'axios';
+import type { UseMutateFunction } from '@tanstack/react-query';
 import { typeEnumValues } from '../enums/type-enum';
 import { statusEnumValues } from '../enums/status-enum';
 import { DatePicker } from '@/components/shared/date-picker';
@@ -36,12 +35,10 @@ interface TaskDialogProps {
   open: boolean;
   setOpen: (open: boolean) => void;
   initialForm: TaskSchemaType;
-  useMutation: UseMutationResult<AxiosResponse<any, any>, Error, TaskSchemaType, unknown>;
+  mutateFn: UseMutateFunction<any, Error, TaskSchemaType, unknown>;
 }
 
-export function TaskDialog({ open, setOpen, initialForm, useMutation }: TaskDialogProps) {
-  const { mutate: mutateFn } = useMutation;
-  
+export function TaskDialog({ open, setOpen, initialForm, mutateFn }: TaskDialogProps) {  
   const form = useForm<TaskSchemaType>({
     resolver: zodResolver(taskSchema),
     defaultValues: initialForm,

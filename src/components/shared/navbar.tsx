@@ -7,7 +7,7 @@ import { useCreateTask } from '@/features/tasks/hooks/use-create-task';
 
 export function Navbar() {
   const [isCreateDialogOpen, setiIsCreateDialogOpen] = useState(false);
-  const createMutation = useCreateTask();
+  const { mutate: createTask } = useCreateTask();
 
   return (
     <>
@@ -15,7 +15,7 @@ export function Navbar() {
         open={ isCreateDialogOpen } 
         setOpen={ (open: boolean) => setiIsCreateDialogOpen(open) } 
         initialForm={ { type: 'TASK', description: '', dueDate: new Date(), status: 'TO_DO' } }
-        useMutation={ createMutation }
+        mutateFn={ createTask }
       />
       <div className='flex w-full bg-slate-300 fixed p-4 justify-between'>
         <h1 className='text-xl font-bold'>Task Manager</h1>

@@ -6,6 +6,7 @@ const TYPE_VALUES: string[] = [...typeEnumValues];
 const STATUS_VALUES: string[] = [...statusEnumValues];
 
 export const taskSchema = z.object({
+  id: z.coerce.number().nonnegative().optional(),
   type: z.enum(TYPE_VALUES as [string, ...string[]]),
   description: z.string().min(1, 'Description is required.'),
   dueDate: z.coerce.date(),

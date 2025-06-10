@@ -8,18 +8,19 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { useLogout } from "../hooks/use-logout";
+import { useDeleteTask } from "../hooks/use-delete-task";
 
-interface LogoutDialogProps {
+interface TaskDeleteDialogProps {
   open: boolean;
   setOpen: (open: boolean) => void;
+  id: number;
 }
 
-export function LogoutDialog({ open, setOpen }: LogoutDialogProps) {
-    const { mutate: logout } = useLogout();
+export function TaskDeleteDialog({ open, setOpen, id }: TaskDeleteDialogProps) {
+    const { mutate: deleteTask } = useDeleteTask();
 
-  function handleLogout() {
-    logout();
+  function handleDeleteTask() {
+    deleteTask(id);
     setOpen(false);
   }
   
@@ -29,12 +30,12 @@ export function LogoutDialog({ open, setOpen }: LogoutDialogProps) {
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            Are you absolutely sure you want to logout?
+            This action cannot be undone. This will permanently delete your task.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel onClick={ () => setOpen(false) }>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={ handleLogout }>Continue</AlertDialogAction>
+          <AlertDialogAction onClick={ handleDeleteTask }>Continue</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

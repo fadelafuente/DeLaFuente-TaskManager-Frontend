@@ -17,6 +17,10 @@ import {
 import { toast } from 'sonner';
 import { useNavigate } from '@tanstack/react-router';
 import { useSession } from '@/features/auth/hooks/use-get-session';
+import { useUpdateTask } from '../hooks/use-update-task';
+import { TaskDialog } from '../components/task-dialog';
+import { useState } from 'react';
+import { TaskDeleteDialog } from '../components/task-delete-dialog';
 
 export const taskColumns: ColumnDef<Task>[] = [
   {
@@ -89,6 +93,9 @@ export const taskColumns: ColumnDef<Task>[] = [
       const task: Task = row.original;
       const navigate = useNavigate();
       const { data: session, isLoading } = useSession();
+      const [openUpdate, setOpenUpdate] = useState(false);
+      const [openDelete, setOpenDelete] = useState(false);
+      const { mutate: updateTask } = useUpdateTask();
 
       function copyToClipBoard() {
         navigator.clipboard.writeText(`${ import.meta.env.VITE_URL }/tasks/${ task.id }`);
@@ -105,6 +112,8 @@ export const taskColumns: ColumnDef<Task>[] = [
 
       return (
         <DropdownMenu>
+          <TaskDialog open={ openUpdate } setOpen={ (o) => setOpenUpdate(o) } initialForm={ task } mutateFn={ updateTask } />
+          <TaskDeleteDialog open={ openDelete } setOpen={ (o) => setOpenDelete(o) } id={ task.id } />
           <DropdownMenuTrigger>
             <Button variant='outline' className="size-8 rounded-full">
               <Ellipsis />
@@ -126,12 +135,12 @@ export const taskColumns: ColumnDef<Task>[] = [
             { session?.username === task.creator.username ?
               <>
                 <DropdownMenuItem 
-                  onClick={ () => {} }
+                  onClick={ () => setOpenUpdate(true) }
                 >
                   <PencilLine /> Update Task
                 </DropdownMenuItem>
                 <DropdownMenuItem 
-                  onClick={ () => {} }
+                  onClick={ () => setOpenDelete(true) }
                 >
                   <Eraser /> Delete Task
                 </DropdownMenuItem>
