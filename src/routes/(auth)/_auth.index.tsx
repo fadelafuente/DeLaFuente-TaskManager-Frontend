@@ -2,7 +2,7 @@ import { taskColumns } from '@/features/tasks/columns/task-columns';
 import { TaskTable } from '@/features/tasks/components/task-table';
 import { useGetTasks } from '@/features/tasks/hooks/use-get-tasks'
 import { createFileRoute } from '@tanstack/react-router'
-import type { PaginationState } from '@tanstack/react-table';
+import type { PaginationState, SortingState } from '@tanstack/react-table';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -15,7 +15,8 @@ function RouteComponent() {
     pageIndex: 0,
     pageSize: 20,
   });
-  const { data: tasks, isLoading } = useGetTasks({ pagination } );
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const { data: tasks, isLoading } = useGetTasks({ pagination, sorting });
 
   if(isLoading) {
     return (
@@ -31,6 +32,7 @@ function RouteComponent() {
         columns={ taskColumns } 
         data={ tasks['content'] } 
         paginationState={ { pagination, setPagination } }
+        sortingState={ { sorting, setSorting } }
         pageCount={ tasks?.totalPages }
       />
     </div>

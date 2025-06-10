@@ -24,11 +24,31 @@ export const taskColumns: ColumnDef<Task>[] = [
   },
   {
     accessorKey: 'type',
-    header: 'Task Type',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Task Type
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      )
+    },
   },
   {
     accessorKey: 'status',
-    header: 'Task Status',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Task Status
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      )
+    },
   },
   {
     accessorKey: 'dueDate',

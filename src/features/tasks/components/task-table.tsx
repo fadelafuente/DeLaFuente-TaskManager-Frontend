@@ -25,12 +25,12 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
-import { useState } from 'react'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   paginationState: { pagination: PaginationState, setPagination: React.Dispatch<React.SetStateAction<PaginationState>> };
+  sortingState: { sorting: SortingState, setSorting: React.Dispatch<React.SetStateAction<SortingState>> };
   pageCount: number;
 }
 
@@ -38,9 +38,9 @@ export function TaskTable<TData, TValue>({
   columns,
   data,
   paginationState: { pagination, setPagination },
+  sortingState: { sorting, setSorting },
   pageCount
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
 
   const table = useReactTable({
     data,
