@@ -21,6 +21,7 @@ import { useUpdateTask } from '../hooks/use-update-task';
 import { TaskDialog } from '../components/task-dialog';
 import { useState } from 'react';
 import { TaskDeleteDialog } from '../components/task-delete-dialog';
+import { useDeleteTask } from '../hooks/use-delete-task';
 
 export const taskColumns: ColumnDef<Task>[] = [
   {
@@ -96,6 +97,12 @@ export const taskColumns: ColumnDef<Task>[] = [
       const [openUpdate, setOpenUpdate] = useState(false);
       const [openDelete, setOpenDelete] = useState(false);
       const { mutate: updateTask } = useUpdateTask();
+      const { mutate: deleteTask } = useDeleteTask();
+
+      function handleDeleteTask() {
+        deleteTask(task.id);
+        setOpenDelete(false);
+      }
 
       function copyToClipBoard() {
         navigator.clipboard.writeText(`${ import.meta.env.VITE_URL }/tasks/${ task.id }`);
@@ -111,44 +118,45 @@ export const taskColumns: ColumnDef<Task>[] = [
       }
 
       return (
-        <DropdownMenu>
-          <TaskDialog open={ openUpdate } setOpen={ (o) => setOpenUpdate(o) } initialForm={ task } mutateFn={ updateTask } />
-          <TaskDeleteDialog open={ openDelete } setOpen={ (o) => setOpenDelete(o) } id={ task.id } />
-          <DropdownMenuTrigger>
-            <Button variant='outline' className="size-8 rounded-full">
+        <div className='w-full flex justify-end'>
+          <DropdownMenu>
+            <TaskDialog open={ openUpdate } setOpen={ (o) => setOpenUpdate(o) } initialForm={ task } mutateFn={ updateTask } />
+            <TaskDeleteDialog open={ openDelete } setOpen={ (o) => setOpenDelete(o) } id={ task.id } onDeleteTask={ handleDeleteTask } />
+            <DropdownMenuTrigger className="size-8 rounded-full flex items-center justify-center">
               <Ellipsis />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => copyToClipBoard()}
-            >
-              <Clipboard /> Copy Task URL
-            </DropdownMenuItem>
-            <DropdownMenuItem 
-              onClick={ () => navigate({ to: `/tasks/${task.id}` }) }
-            >
-              <Eye /> View Task
-            </DropdownMenuItem>
-            { session?.username === task.creator.username ?
-              <>
-                <DropdownMenuItem 
-                  onClick={ () => setOpenUpdate(true) }
-                >
-                  <PencilLine /> Update Task
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={ () => setOpenDelete(true) }
-                >
-                  <Eraser /> Delete Task
-                </DropdownMenuItem>
-              </>
-            : <></>
-            }
-          </DropdownMenuContent>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => copyToClipBoard()}
+              >
+                <Clipboard /> Copy Task URL
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={ () => navigate({ to: `/tasks/${task.id}` }) }
+              >
+                <Eye /> View Task
+              </DropdownMenuItem>
+              { session?.username === task.creator.username ?
+                <>
+                  <DropdownMenuItem 
+                    onClick={ () => setOpenUpdate(true) }
+                  >
+                    <PencilLine /> Update Task
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={ () => setOpenDelete(true) }
+                    variant='destructive'
+                  >
+                    <Eraser /> Delete Task
+                  </DropdownMenuItem>
+                </>
+              : <></>
+              }
+            </DropdownMenuContent>
         </DropdownMenu>
+        </div>
       )
     }
   },

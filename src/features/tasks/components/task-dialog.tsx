@@ -48,9 +48,10 @@ export function TaskDialog({ open, setOpen, initialForm, mutateFn }: TaskDialogP
     mutateFn(values, {
       onSuccess: () => {
         setOpen(false);
+        if(values.id === undefined)
+          form.reset();
       }
     });
-    
   };
 
   return (

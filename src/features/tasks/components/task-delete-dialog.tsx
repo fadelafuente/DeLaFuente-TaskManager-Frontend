@@ -8,21 +8,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { useDeleteTask } from "../hooks/use-delete-task";
 
 interface TaskDeleteDialogProps {
   open: boolean;
   setOpen: (open: boolean) => void;
+  onDeleteTask: (open: boolean) => void;
   id: number;
 }
 
-export function TaskDeleteDialog({ open, setOpen, id }: TaskDeleteDialogProps) {
-    const { mutate: deleteTask } = useDeleteTask();
-
-  function handleDeleteTask() {
-    deleteTask(id);
-    setOpen(false);
-  }
+export function TaskDeleteDialog({ open, setOpen, onDeleteTask }: TaskDeleteDialogProps) {
   
   return(
     <AlertDialog open={ open } onOpenChange={ setOpen }>
@@ -35,7 +29,7 @@ export function TaskDeleteDialog({ open, setOpen, id }: TaskDeleteDialogProps) {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel onClick={ () => setOpen(false) }>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={ handleDeleteTask }>Continue</AlertDialogAction>
+          <AlertDialogAction onClick={ () => onDeleteTask(false) }>Continue</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

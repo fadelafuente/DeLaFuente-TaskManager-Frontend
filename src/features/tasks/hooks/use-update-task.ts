@@ -12,9 +12,10 @@ export const useUpdateTask = () => {
       const response = await axiosInstance.post(`/tasks/${ body.id }`, body);
       return response;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       toast('Task updated successfully.');
-      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['tasks', 'task'] });
+      queryClient.refetchQueries();
     },
     onError: (error) => {
       if(error instanceof AxiosError) {

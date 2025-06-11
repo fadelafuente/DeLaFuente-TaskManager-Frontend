@@ -8,12 +8,18 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { useGetTaskById } from '@/features/tasks/hooks/use-get-task-by-id';
-import { createFileRoute, useParams, useRouter } from '@tanstack/react-router';
-import { ArrowLeft, ClipboardX, Loader2 } from 'lucide-react';
+import { createFileRoute, useNavigate, useParams, useRouter } from '@tanstack/react-router';
+import { ArrowLeft, ClipboardX, Eraser, Loader2, PencilLine } from 'lucide-react';
 import { Badge } from "@/components/ui/badge"
 import { typeMapColors } from '@/features/tasks/enums/type-enum';
 import { cn, formatDate } from '@/lib/utils';
 import { statusMapColors } from '@/features/tasks/enums/status-enum';
+import { useSession } from '@/features/auth/hooks/use-get-session';
+import { useState } from 'react';
+import { useUpdateTask } from '@/features/tasks/hooks/use-update-task';
+import { TaskDialog } from '@/features/tasks/components/task-dialog';
+import { TaskDeleteDialog } from '@/features/tasks/components/task-delete-dialog';
+import { useDeleteTask } from '@/features/tasks/hooks/use-delete-task';
 
 export const Route = createFileRoute('/(auth)/_auth/tasks/$taskid')({
   component: RouteComponent,
@@ -23,8 +29,25 @@ function RouteComponent() {
   const params = useParams({ from: '/(auth)/_auth/tasks/$taskid' });
   const { history } = useRouter();
   const { data: task, isLoading } = useGetTaskById(params.taskid);
+  const { data: auth, isLoading: isAuthLoading } = useSession();
+  const [openUpdate, setOpenUpdate] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
+  const { mutate: updateTask } = useUpdateTask();
+  const { mutate: deleteTask } = useDeleteTask();
+  const navigate = useNavigate();
 
-  if(isLoading) {
+  function handleDelete(open: boolean) {
+    if(!task) return;
+
+    deleteTask(task?.id, {
+      onSuccess: () => {
+        setOpenDelete(open);
+        navigate({ to: '/' })
+      }
+    });
+  }
+
+  if(isLoading || isAuthLoading) {
     return (
       <div className='flex items-center justify-center h-full'>
         <Loader2 className='size-8 animate-spin' />
@@ -32,31 +55,41 @@ function RouteComponent() {
     );
   }
 
-  console.log(task);
-
   return (
     <div className='flex flex-col gap-4 items-center h-full'>
       { task ? 
         <div className='flex flex-col gap-2 w-150'>
-          <h1 className='flex gap-2 items-center mb-2'>
-            <Button variant='outline' onClick={ () => history.go(-1) }><ArrowLeft /></Button>
-            <span className='text-2xl font-bold'>Task</span>
-          </h1>
-          <div className='flex justify-between'>
-            <span>@{ task.creator.username }</span>
-            <div className='flex gap-2'>
-              <Badge className={
-                cn(
-                  'p-2 rounded-full font-bold',
-                  statusMapColors.get(task.status)
-                )}
-              >{ task.status }</Badge>
-              <Badge className={ cn(
-                'p-2 rounded-full font-bold',
-                typeMapColors.get(task.type)
-              ) }>{ task.type }</Badge>
+          <TaskDialog open={ openUpdate } setOpen={ setOpenUpdate } initialForm={ task } mutateFn={ updateTask } />
+          <TaskDeleteDialog open={ openDelete } setOpen={ setOpenDelete } id={ task.id } onDeleteTask={ handleDelete } />
+          <h1 className='flex items-center mb-4 justify-between'>
+            <div className='flex gap-4 items-center'>
+              <Button variant='outline' onClick={ () => history.go(-1) }><ArrowLeft /></Button>
+              <span className='text-2xl font-bold'>Task</span>
             </div>
+            { task.creator.username === auth.username ?
+              <div className='flex gap-2'>
+                <Button variant='destructive' onClick={ () => setOpenDelete(true) }>
+                  <Eraser />
+                </Button>
+                <Button variant='outline' onClick={ () => setOpenUpdate(true) }>
+                  <PencilLine />
+                </Button>
+              </div>
+            : <></> }           
+          </h1>
+          <div className='flex gap-2'>
+            <Badge className={
+              cn(
+                'p-2 rounded-full font-bold',
+                statusMapColors.get(task.status)
+              )}
+            >{ task.status }</Badge>
+            <Badge className={ cn(
+              'p-2 rounded-full font-bold',
+              typeMapColors.get(task.type)
+            ) }>{ task.type }</Badge>
           </div>
+          <span>@{ task.creator.username }</span>
           <div>
             <p>Start Date:&nbsp;{ formatDate(new Date(task.dateCreated).toLocaleDateString()) }</p>
             <p>Due Date:&nbsp;&nbsp;{ formatDate(new Date(task.dueDate).toLocaleDateString()) }</p>
