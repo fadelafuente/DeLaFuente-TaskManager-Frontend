@@ -16,12 +16,12 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
 import { useNavigate } from '@tanstack/react-router';
-import { useSession } from '@/features/auth/hooks/use-get-session';
 import { useUpdateTask } from '../hooks/use-update-task';
 import { TaskDialog } from '../components/task-dialog';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { TaskDeleteDialog } from '../components/task-delete-dialog';
 import { useDeleteTask } from '../hooks/use-delete-task';
+import { SessionContext } from '@/features/auth/hooks/use-get-session';
 
 export const taskColumns: ColumnDef<Task>[] = [
   {
@@ -93,7 +93,7 @@ export const taskColumns: ColumnDef<Task>[] = [
     cell: ({ row }) => {
       const task: Task = row.original;
       const navigate = useNavigate();
-      const { data: session, isLoading } = useSession();
+      const session = useContext(SessionContext);
       const [openUpdate, setOpenUpdate] = useState(false);
       const [openDelete, setOpenDelete] = useState(false);
       const { mutate: updateTask } = useUpdateTask();
@@ -107,10 +107,6 @@ export const taskColumns: ColumnDef<Task>[] = [
       function copyToClipBoard() {
         navigator.clipboard.writeText(`${ import.meta.env.VITE_URL }/tasks/${ task.id }`);
         toast('Copied task URL to clipboard.');
-      }
-
-      if(isLoading) {
-        return <div></div>;
       }
 
       if(!session) {
@@ -138,7 +134,7 @@ export const taskColumns: ColumnDef<Task>[] = [
               >
                 <Eye /> View Task
               </DropdownMenuItem>
-              { session?.username === task.creator.username ?
+              { session && (session as any)?.username === task.creator.username ?
                 <>
                   <DropdownMenuItem 
                     onClick={ () => setOpenUpdate(true) }

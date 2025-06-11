@@ -14,12 +14,12 @@ import { Badge } from "@/components/ui/badge"
 import { typeMapColors } from '@/features/tasks/enums/type-enum';
 import { cn, formatDate } from '@/lib/utils';
 import { statusMapColors } from '@/features/tasks/enums/status-enum';
-import { useSession } from '@/features/auth/hooks/use-get-session';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useUpdateTask } from '@/features/tasks/hooks/use-update-task';
 import { TaskDialog } from '@/features/tasks/components/task-dialog';
 import { TaskDeleteDialog } from '@/features/tasks/components/task-delete-dialog';
 import { useDeleteTask } from '@/features/tasks/hooks/use-delete-task';
+import { SessionContext } from '@/features/auth/hooks/use-get-session';
 
 export const Route = createFileRoute('/(auth)/_auth/tasks/$taskid')({
   component: RouteComponent,
@@ -29,7 +29,7 @@ function RouteComponent() {
   const params = useParams({ from: '/(auth)/_auth/tasks/$taskid' });
   const { history } = useRouter();
   const { data: task, isLoading } = useGetTaskById(params.taskid);
-  const { data: auth, isLoading: isAuthLoading } = useSession();
+  const session = useContext(SessionContext);
   const [openUpdate, setOpenUpdate] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const { mutate: updateTask } = useUpdateTask();
@@ -47,7 +47,7 @@ function RouteComponent() {
     });
   }
 
-  if(isLoading || isAuthLoading) {
+  if(isLoading) {
     return (
       <div className='flex items-center justify-center h-full'>
         <Loader2 className='size-8 animate-spin' />
@@ -66,7 +66,7 @@ function RouteComponent() {
               <Button variant='outline' onClick={ () => history.go(-1) }><ArrowLeft /></Button>
               <span className='text-2xl font-bold'>Task</span>
             </div>
-            { task.creator.username === auth.username ?
+            { session && task.creator.username === (session as any)?.username ?
               <div className='flex gap-2'>
                 <Button variant='destructive' onClick={ () => setOpenDelete(true) }>
                   <Eraser />

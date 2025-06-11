@@ -1,5 +1,6 @@
 import { axiosInstance } from '@/lib/axios-instance'
 import { useQuery } from '@tanstack/react-query'
+import { createContext } from 'react';
 
 export function useSession() {
   return useQuery({
@@ -15,3 +16,5 @@ export function useSession() {
     queryKey: [`auth`],
   });
 }
+
+export const SessionContext = createContext(null);
